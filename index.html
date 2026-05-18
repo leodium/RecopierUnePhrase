@@ -7,6 +7,8 @@
 
 <style>
 
+/* ===== STYLE IDENTIQUE (inchangé) ===== */
+
 body{
     font-family: Arial, sans-serif;
     background:#f4f7fb;
@@ -248,8 +250,10 @@ footer{
 
 <script>
 
-/* PHRASES */
+/* ===== 20 PHRASES (10 anciennes + 10 nouvelles avec ! ?) ===== */
+
 const allPhrases=[
+
 "Le petit chat noir dort sur le canapé.",
 "Papa prépare une grande pizza pour le repas.",
 "La prof écrit la date au tableau noir.",
@@ -259,10 +263,22 @@ const allPhrases=[
 "Nous jouons ensemble dans la grande cour d'école.",
 "Le lapin gris mange une carotte dans l'herbe.",
 "Le soleil brille fort pendant toute la journée.",
-"Marie range ses livres après la classe du matin."
+"Marie range ses livres après la classe du matin.",
+
+"Le chien court dans le jardin !",
+"Le soleil est très chaud aujourd'hui !",
+"Les enfants jouent dans la cour !",
+"Tu veux venir avec nous ?",
+"Il pleut dehors ?",
+"Regarde ce beau dessin !",
+"Le chat dort-il sur le canapé ?",
+"Les oiseaux chantent le matin !",
+"Est-ce que tu aimes l'école ?",
+"Nous allons au parc ce soir !"
+
 ];
 
-/* ===== TRUE RANDOM (FISHER-YATES) ===== */
+/* ===== RANDOM PROPRE ===== */
 function shuffle(array){
     for(let i=array.length-1;i>0;i--){
         let j=Math.floor(Math.random()*(i+1));
@@ -273,25 +289,19 @@ function shuffle(array){
 
 let phrases = shuffle([...allPhrases]).slice(0,10);
 
-/* STATE */
+/* ===== RESTE IDENTIQUE ===== */
+
 let current=0;
 let tries=0;
 let score=0;
 
-/* TIMER */
 let started=false;
 let startTime=null;
 let timerInterval=null;
 
-/* ELEMENTS */
 const phraseEl=document.getElementById("phrase");
 const answerEl=document.getElementById("answer");
 const feedbackEl=document.getElementById("feedback");
-
-/* ENTER */
-document.addEventListener("keydown",e=>{
-    if(e.key==="Enter") checkAnswer();
-});
 
 /* TIMER */
 function startTimer(){
@@ -333,7 +343,6 @@ function startGame(){
 function createBalls(){
     let b=document.getElementById("balls");
     b.innerHTML="";
-
     for(let i=0;i<phrases.length;i++){
         let d=document.createElement("div");
         d.className="ball";
@@ -366,8 +375,7 @@ function load(){
 
 /* NORMALIZE */
 function normalize(str){
-    return str
-        .toLowerCase()
+    return str.toLowerCase()
         .replace(/[.,!?;:]/g,"")
         .replace(/\s+/g," ")
         .trim();
@@ -383,28 +391,24 @@ function checkAnswer(){
 
     resetErrors();
 
-    /* ERRORS */
     if(user.charAt(0)!==correct.charAt(0))
         document.getElementById("e2").classList.add("errorOn");
 
-    if(!user.endsWith(".") && !user.endsWith(","))
+    let last=user.trim().slice(-1);
+    let valid=[".",",","!","?"];
+
+    if(!valid.includes(last))
         document.getElementById("e3").classList.add("errorOn");
 
     if(user.includes("  ") || user.trim()!==user)
         document.getElementById("e4").classList.add("errorOn");
 
-    /* WORD CHECK (FIXED) */
-    let u=normalize(user).split(" ");
-    let c=normalize(correct).split(" ");
+    let u=normalize(user).split(" ").filter(x=>x);
+    let c=normalize(correct).split(" ").filter(x=>x);
 
-    let wordError=false;
+    let wordError = u.length!==c.length;
 
-    u=u.filter(x=>x.length>0);
-    c=c.filter(x=>x.length>0);
-
-    if(u.length!==c.length){
-        wordError=true;
-    } else {
+    if(!wordError){
         for(let i=0;i<c.length;i++){
             if(u[i]!==c[i]){
                 wordError=true;
@@ -413,11 +417,9 @@ function checkAnswer(){
         }
     }
 
-    if(wordError){
+    if(wordError)
         document.getElementById("e1").classList.add("errorOn");
-    }
 
-    /* SUCCESS */
     if(user===correct){
 
         let gain=tries===1?3:tries===2?2:1;
@@ -436,6 +438,7 @@ function checkAnswer(){
     feedbackEl.innerHTML="❌ Corrige les erreurs";
 
     if(tries>=3){
+
         let ball=document.getElementById("ball"+current);
         if(ball) ball.classList.add("red");
 
