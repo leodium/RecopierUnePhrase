@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -140,14 +141,22 @@ button:hover{
 
 <div class="container">
 
-<h1>Copie la phrase</h1>
+<h1>📚 Copie la phrase</h1>
 
 <div class="consignes">
 <ul>
-<li>Recopie exactement la phrase.</li>
-<li>Attention aux majuscules et à la ponctuation.</li>
-<li>3 essais maximum.</li>
+<li>✏️ Recopie exactement la phrase.</li>
+<li>🔠 Attention aux majuscules.</li>
+<li>❗ Attention à la ponctuation.</li>
+<li>🎯 3 essais maximum.</li>
 </ul>
+
+<p><b>🏆 Points :</b><br>
+🥇 1er essai = 3 points<br>
+🥈 2e essai = 2 points<br>
+🥉 3e essai = 1 point
+</p>
+
 </div>
 
 <div id="phrase" class="phrase"></div>
@@ -162,7 +171,7 @@ button:hover{
 <div id="feedback" class="feedback"></div>
 
 <div id="score" class="score">Score : 0 / 0</div>
-<div id="timer">Temps : 0s</div>
+<div id="timer">Temps : 00:00</div>
 
 <div id="balls" class="balls"></div>
 
@@ -173,10 +182,9 @@ button:hover{
 <script>
 
 // =======================
-// TES PHRASES
+// PHRASES
 // =======================
 const allPhrases = [
-
 "Le petit chat noir dort sur le canapé.",
 "Papa prépare une grande pizza pour le repas.",
 "La prof écrit la date au tableau noir.",
@@ -187,7 +195,6 @@ const allPhrases = [
 "Le lapin gris mange une carotte dans l'herbe.",
 "Le soleil brille fort pendant toute la journée.",
 "Marie range ses livres après la classe du matin.",
-
 "Le garçon ouvre doucement la porte de la cuisine.",
 "La petite souris mange un morceau de fromage jaune.",
 "Tom construit une haute tour avec ses cubes rouges.",
@@ -198,7 +205,6 @@ const allPhrases = [
 "Le pirate cherche un trésor sur la grande île.",
 "Mon frère joue au ballon avec ses amis dehors.",
 "Le cheval saute facilement par dessus la vieille barrière.",
-
 "La pluie tombe sur les toits de la ville.",
 "Les enfants jouent dans le parc après l'école.",
 "Maman prépare un gâteau au chocolat délicieux.",
@@ -209,7 +215,6 @@ const allPhrases = [
 "Le maître corrige les cahiers des élèves.",
 "Les oiseaux chantent dans les arbres du parc.",
 "Le soleil se lève tôt le matin.",
-
 "Le bébé dort dans son petit lit blanc.",
 "Les élèves rangent leurs affaires dans leur sac.",
 "Le jardin est plein de fleurs colorées.",
@@ -220,7 +225,6 @@ const allPhrases = [
 "Le chien court derrière le ballon.",
 "Nous mangeons à la cantine de l'école.",
 "Le vent fait bouger les feuilles des arbres.",
-
 "Le poisson nage dans l'eau claire.",
 "Les enfants rient dans la cour de récréation.",
 "Maman lit une histoire avant le coucher.",
@@ -231,7 +235,6 @@ const allPhrases = [
 "La maîtresse explique la leçon au tableau.",
 "Les oiseaux volent dans le ciel.",
 "Le soir, nous regardons la télévision ensemble."
-
 ];
 
 // =======================
@@ -254,9 +257,17 @@ const ballsEl = document.getElementById("balls");
 const endEl = document.getElementById("endMessage");
 
 // =======================
+// TIMER mm:ss
+// =======================
 function updateTimer(){
-    let s = Math.floor((Date.now()-startTime)/1000);
-    document.getElementById("timer").innerHTML = "Temps : " + s + "s";
+    let total = Math.floor((Date.now()-startTime)/1000);
+    let min = Math.floor(total / 60);
+    let sec = total % 60;
+
+    if(sec < 10) sec = "0" + sec;
+
+    document.getElementById("timer").innerHTML =
+    "Temps : " + min + ":" + sec;
 }
 
 // =======================
@@ -274,7 +285,10 @@ function load(){
 
         clearInterval(timerInterval);
 
-        let final = Math.floor((Date.now()-startTime)/1000);
+        let total = Math.floor((Date.now()-startTime)/1000);
+        let min = Math.floor(total / 60);
+        let sec = total % 60;
+        if(sec < 10) sec = "0" + sec;
 
         phraseEl.innerHTML="";
         answerEl.classList.add("hidden");
@@ -283,7 +297,7 @@ function load(){
         endEl.innerHTML =
         "🎉 Terminé !<br><br>" +
         "Score : " + score + " / " + (phrases.length*3) +
-        "<br>Temps : " + final + "s<br><br>" +
+        "<br>Temps : " + min + ":" + sec + "<br><br>" +
         "<button id='restartBtn' onclick='restart()'>Recommencer</button>";
 
         return;
@@ -296,7 +310,7 @@ function load(){
     tries=0;
     attemptsEl.innerHTML="Essai : 1 / 3";
 
-    scoreEl.innerHTML="Score : "+score+" / "+((current+1)*3);
+    scoreEl.innerHTML="Score : "+score+" / "+(current*3);
 
     if(!timerInterval){
         startTime=Date.now();
@@ -304,8 +318,6 @@ function load(){
     }
 }
 
-// =======================
-// CHECK AVEC ERREURS ESPACÉES
 // =======================
 function checkAnswer(){
 
@@ -328,9 +340,6 @@ function checkAnswer(){
     if(user.trim()!==user)
         errors.push("Espaces inutiles");
 
-    if(user!==correct && errors.length===0)
-        errors.push("Mots incorrects");
-
     if(user===correct){
 
         let gain = tries===1?3:tries===2?2:1;
@@ -347,19 +356,16 @@ function checkAnswer(){
         return;
     }
 
-    // 🔥 ERREURS BIEN VISIBLES
-    let htmlErrors = "";
+    let html = "";
 
     if(tries>=2){
-
         errors.forEach(e=>{
-            htmlErrors += `<div class="error">❌ ${e}</div>`;
+            html += `<div class="error">❌ ${e}</div>`;
         });
 
-        feedbackEl.innerHTML = "Erreurs détectées :<br><br>" + htmlErrors;
-
+        feedbackEl.innerHTML =
+        "Erreurs détectées :<br><br>" + html;
     } else {
-
         feedbackEl.innerHTML =
         "❌ Essaie encore<br><br>" + errors.join("<br>");
     }
@@ -378,7 +384,7 @@ function checkAnswer(){
         return;
     }
 
-    attemptsEl.innerHTML="Essai : "+(tries+1)+" / 3";
+    attemptsEl.innerHTML="Essai : "+tries+" / 3";
 }
 
 // =======================
@@ -411,7 +417,6 @@ function restart(){
     load();
 }
 
-// =======================
 answerEl.addEventListener("keydown",e=>{
     if(e.key==="Enter") checkAnswer();
 });
