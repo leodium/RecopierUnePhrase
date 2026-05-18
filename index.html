@@ -14,7 +14,6 @@ body{
     padding:10px;
 }
 
-/* TITRE */
 .title{
     text-align:center;
     font-size:26px;
@@ -22,7 +21,6 @@ body{
     margin:10px 0 20px 0;
 }
 
-/* 3 COLONNES */
 .top{
     display:flex;
     gap:12px;
@@ -54,7 +52,25 @@ body{
     font-weight:bold;
 }
 
-/* ZONE EXERCICE */
+.balls{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:10px;
+}
+
+.ball{
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:#bbb;
+}
+
+.green{background:#2ecc71;}
+.orange{background:#f39c12;}
+.red{background:#e74c3c;}
+
 .container{
     max-width:900px;
     margin:15px auto;
@@ -66,7 +82,6 @@ body{
     position:relative;
 }
 
-/* OVERLAY START */
 .overlay{
     position:absolute;
     inset:0;
@@ -76,7 +91,6 @@ body{
     justify-content:center;
     border-radius:16px;
     z-index:10;
-    flex-direction:column;
 }
 
 .start-btn{
@@ -89,11 +103,6 @@ body{
     cursor:pointer;
 }
 
-.start-btn:hover{
-    background:#27ae60;
-}
-
-/* CONTENU */
 .phrase{
     font-size:26px;
     font-weight:bold;
@@ -124,14 +133,45 @@ button{
 .feedback{
     margin-top:15px;
     font-size:18px;
-    min-height:50px;
+    min-height:60px;
     text-align:left;
     background:#fafafa;
     padding:10px;
     border-radius:10px;
+    white-space:pre-line;
 }
 
-.hidden{display:none;}
+.errorBox{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-top:15px;
+    flex-wrap:wrap;
+}
+
+.errorItem{
+    padding:10px 12px;
+    border-radius:10px;
+    background:#ddd;
+    font-size:14px;
+    font-weight:bold;
+    min-width:120px;
+    text-align:center;
+}
+
+.errorOn{
+    background:#e74c3c;
+    color:white;
+}
+
+#score,#timer{font-weight:bold;}
+
+footer{
+    text-align:center;
+    margin-top:25px;
+    font-size:14px;
+    color:#666;
+}
 
 </style>
 </head>
@@ -140,7 +180,6 @@ button{
 
 <div class="title">✍️ Copie de phrases</div>
 
-<!-- 3 COLONNES -->
 <div class="top">
 
     <div class="box blue">
@@ -148,11 +187,12 @@ button{
         <p>✏️ Recopie exactement la phrase</p>
         <p>🔠 Majuscules importantes</p>
         <p>❗ Ponctuation obligatoire</p>
-        <p>🎯 3 essais maximum</p>
+        <p>📏 Vérifie les espaces</p>
     </div>
 
     <div class="box blue">
         <h3>🎯 Essais</h3>
+        <p>🎯 3 essais maximum</p>
         <p>🥇 1er essai = 3 points</p>
         <p>🥈 2e essai = 2 points</p>
         <p>🥉 3e essai = 1 point</p>
@@ -160,27 +200,27 @@ button{
 
     <div class="box greenbox">
         <div class="grid-right">
+
             <div class="smallbox">
                 📊 Score<br>
                 <span id="score">0 / 0</span>
+                <div id="balls" class="balls"></div>
             </div>
 
             <div class="smallbox">
                 ⏱️ Temps<br>
                 <span id="timer">0 minute 0 seconde</span>
             </div>
+
         </div>
     </div>
 
 </div>
 
-<!-- ZONE EXERCICE -->
 <div class="container">
 
 <div id="overlay" class="overlay">
-    <button class="start-btn" onclick="startGame()">
-        ▶ Clique quand tu es prêt
-    </button>
+    <button class="start-btn" onclick="startGame()">▶ Clique quand tu es prêt</button>
 </div>
 
 <div id="phrase" class="phrase"></div>
@@ -193,12 +233,23 @@ button{
 
 <div id="feedback" class="feedback"></div>
 
+<div id="errorBox" class="errorBox">
+
+    <div id="e1" class="errorItem">❌ Mots</div>
+    <div id="e2" class="errorItem">🔠 Majuscule</div>
+    <div id="e3" class="errorItem">❗ Ponctuation</div>
+    <div id="e4" class="errorItem">↔️ Espaces</div>
+
 </div>
+
+</div>
+
+<footer>© Leodium</footer>
 
 <script>
 
-// ===== PHRASES =====
-const allPhrases = [
+/* PHRASES */
+const allPhrases=[
 "Le petit chat noir dort sur le canapé.",
 "Papa prépare une grande pizza pour le repas.",
 "La prof écrit la date au tableau noir.",
@@ -211,108 +262,183 @@ const allPhrases = [
 "Marie range ses livres après la classe du matin."
 ];
 
-let phrases = [...allPhrases].sort(() => Math.random() - 0.5).slice(0, 10);
+/* ===== TRUE RANDOM (FISHER-YATES) ===== */
+function shuffle(array){
+    for(let i=array.length-1;i>0;i--){
+        let j=Math.floor(Math.random()*(i+1));
+        [array[i],array[j]]=[array[j],array[i]];
+    }
+    return array;
+}
 
-let current = 0;
-let tries = 0;
-let score = 0;
+let phrases = shuffle([...allPhrases]).slice(0,10);
 
-let startTime = null;
-let timerInterval = null;
-let started = false;
+/* STATE */
+let current=0;
+let tries=0;
+let score=0;
 
-const phraseEl = document.getElementById("phrase");
-const answerEl = document.getElementById("answer");
-const feedbackEl = document.getElementById("feedback");
+/* TIMER */
+let started=false;
+let startTime=null;
+let timerInterval=null;
 
-// ===== START =====
+/* ELEMENTS */
+const phraseEl=document.getElementById("phrase");
+const answerEl=document.getElementById("answer");
+const feedbackEl=document.getElementById("feedback");
+
+/* ENTER */
+document.addEventListener("keydown",e=>{
+    if(e.key==="Enter") checkAnswer();
+});
+
+/* TIMER */
+function startTimer(){
+    if(started) return;
+    started=true;
+    startTime=Date.now();
+    timerInterval=setInterval(updateTimer,500);
+}
+
+function updateTimer(){
+    let t=Math.floor((Date.now()-startTime)/1000);
+    let m=Math.floor(t/60);
+    let s=t%60;
+
+    let minText=(m<=1)?"minute":"minutes";
+    let secText=(s<=1)?"seconde":"secondes";
+
+    document.getElementById("timer").innerHTML=
+        m+" "+minText+" "+s+" "+secText;
+}
+
+answerEl.addEventListener("input",startTimer);
+
+/* RESET ERRORS */
+function resetErrors(){
+    for(let i=1;i<=4;i++){
+        document.getElementById("e"+i).classList.remove("errorOn");
+    }
+}
+
+/* START */
 function startGame(){
-    document.getElementById("overlay").style.display = "none";
+    document.getElementById("overlay").style.display="none";
+    createBalls();
     load();
 }
 
-// ===== TIMER =====
-function updateTimer(){
+/* BALLS */
+function createBalls(){
+    let b=document.getElementById("balls");
+    b.innerHTML="";
 
-    let t = Math.floor((Date.now() - startTime) / 1000);
-
-    let m = Math.floor(t / 60);
-    let s = t % 60;
-
-    if(s < 10) s = "0" + s;
-
-    let minText = (m <= 1) ? "minute" : "minutes";
-    let secText = (t <= 1) ? "seconde" : "secondes";
-
-    document.getElementById("timer").innerHTML =
-        m + " " + minText + " " + s + " " + secText;
+    for(let i=0;i<phrases.length;i++){
+        let d=document.createElement("div");
+        d.className="ball";
+        d.id="ball"+i;
+        b.appendChild(d);
+    }
 }
 
-// ===== START TIMER =====
-function startTimer(){
-    if(started) return;
-    started = true;
-    startTime = Date.now();
-    timerInterval = setInterval(updateTimer, 500);
-}
-
-answerEl.addEventListener("focus", startTimer);
-answerEl.addEventListener("input", () => {
-    if(answerEl.value.length === 1) startTimer();
-});
-
-// ===== LOAD =====
+/* LOAD */
 function load(){
 
-    if(current >= phrases.length){
-
+    if(current>=phrases.length){
+        phraseEl.innerHTML="";
+        answerEl.disabled=true;
         clearInterval(timerInterval);
-
-        phraseEl.innerHTML = "";
-        answerEl.classList.add("hidden");
-
         return;
     }
 
-    phraseEl.innerHTML = phrases[current];
-    answerEl.value = "";
+    phraseEl.innerHTML=phrases[current];
+    answerEl.value="";
     answerEl.focus();
 
-    tries = 0;
+    tries=0;
 
-    document.getElementById("score").innerHTML =
-        score + " / " + (current * 3);
+    document.getElementById("score").innerHTML=
+        score+" / "+(phrases.length*3);
+
+    resetErrors();
 }
 
-// ===== CHECK =====
+/* NORMALIZE */
+function normalize(str){
+    return str
+        .toLowerCase()
+        .replace(/[.,!?;:]/g,"")
+        .replace(/\s+/g," ")
+        .trim();
+}
+
+/* CHECK */
 function checkAnswer(){
 
-    let correct = phrases[current];
-    let user = answerEl.value;
+    let correct=phrases[current];
+    let user=answerEl.value;
 
     tries++;
 
-    let errors = [];
+    resetErrors();
 
-    if(user.charAt(0) !== correct.charAt(0))
-        errors.push("Majuscule");
+    /* ERRORS */
+    if(user.charAt(0)!==correct.charAt(0))
+        document.getElementById("e2").classList.add("errorOn");
 
-    if(user === correct){
+    if(!user.endsWith(".") && !user.endsWith(","))
+        document.getElementById("e3").classList.add("errorOn");
 
-        let gain = tries === 1 ? 3 : tries === 2 ? 2 : 1;
+    if(user.includes("  ") || user.trim()!==user)
+        document.getElementById("e4").classList.add("errorOn");
 
-        score += gain;
+    /* WORD CHECK (FIXED) */
+    let u=normalize(user).split(" ");
+    let c=normalize(correct).split(" ");
+
+    let wordError=false;
+
+    u=u.filter(x=>x.length>0);
+    c=c.filter(x=>x.length>0);
+
+    if(u.length!==c.length){
+        wordError=true;
+    } else {
+        for(let i=0;i<c.length;i++){
+            if(u[i]!==c[i]){
+                wordError=true;
+                break;
+            }
+        }
+    }
+
+    if(wordError){
+        document.getElementById("e1").classList.add("errorOn");
+    }
+
+    /* SUCCESS */
+    if(user===correct){
+
+        let gain=tries===1?3:tries===2?2:1;
+
+        score+=gain;
+
+        let ball=document.getElementById("ball"+current);
+        if(ball) ball.classList.add(tries===1?"green":"orange");
+
         current++;
-
-        feedbackEl.innerHTML = "✅ Correct";
-
+        feedbackEl.innerHTML="✅ Bravo !";
         load();
         return;
     }
 
-    feedbackEl.innerHTML = "❌ " + errors.join("<br>");
+    feedbackEl.innerHTML="❌ Corrige les erreurs";
 
-    if(tries >= 3){
+    if(tries>=3){
+        let ball=document.getElementById("ball"+current);
+        if(ball) ball.classList.add("red");
+
         current++;
         load();
     }
