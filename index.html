@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Copie de phrases</title>
 
 <style>
 
-/* ===== STYLE IDENTIQUE (inchangé) ===== */
-
 body{
-    font-family: Arial, sans-serif;
+    font-family:Arial,sans-serif;
     background:#f4f7fb;
     margin:0;
     padding:10px;
@@ -18,7 +16,7 @@ body{
 
 .title{
     text-align:center;
-    font-size:26px;
+    font-size:30px;
     font-weight:bold;
     margin:10px 0 20px 0;
 }
@@ -31,14 +29,19 @@ body{
 }
 
 .box{
-    border-radius:14px;
-    padding:15px;
-    box-shadow:0 0 10px rgba(0,0,0,0.08);
     flex:1;
+    padding:15px;
+    border-radius:16px;
+    box-shadow:0 0 10px rgba(0,0,0,0.08);
 }
 
-.blue{background:#d9ecff;}
-.greenbox{background:#d8ffe1;}
+.blue{
+    background:#d9ecff;
+}
+
+.greenbox{
+    background:#d8ffe1;
+}
 
 .grid-right{
     display:flex;
@@ -52,6 +55,96 @@ body{
     padding:10px;
     text-align:center;
     font-weight:bold;
+}
+
+.container{
+    max-width:900px;
+    margin:20px auto;
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 0 12px rgba(0,0,0,0.1);
+    text-align:center;
+    position:relative;
+}
+
+.overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,0.95);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:18px;
+    z-index:10;
+}
+
+.start-btn{
+    padding:16px 32px;
+    font-size:22px;
+    border:none;
+    border-radius:12px;
+    background:#2ecc71;
+    color:white;
+    cursor:pointer;
+}
+
+.phrase{
+    font-size:28px;
+    font-weight:bold;
+    min-height:70px;
+    margin-bottom:20px;
+}
+
+input{
+    width:95%;
+    max-width:700px;
+    padding:14px;
+    font-size:22px;
+    border-radius:12px;
+    border:2px solid #ccc;
+}
+
+button{
+    margin-top:15px;
+    padding:12px 24px;
+    font-size:20px;
+    border:none;
+    border-radius:12px;
+    background:#3498db;
+    color:white;
+    cursor:pointer;
+}
+
+.feedback{
+    margin-top:20px;
+    min-height:90px;
+    font-size:22px;
+    background:#fafafa;
+    border-radius:12px;
+    padding:12px;
+    white-space:pre-line;
+}
+
+.errorBox{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:15px;
+}
+
+.errorItem{
+    padding:10px 14px;
+    border-radius:10px;
+    background:#ddd;
+    font-weight:bold;
+    min-width:120px;
+}
+
+.errorOn{
+    background:#e74c3c;
+    color:white;
 }
 
 .balls{
@@ -69,110 +162,23 @@ body{
     background:#bbb;
 }
 
-.green{background:#2ecc71;}
-.orange{background:#f39c12;}
-.red{background:#e74c3c;}
-
-.container{
-    max-width:900px;
-    margin:15px auto;
-    background:white;
-    padding:20px;
-    border-radius:16px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
-    text-align:center;
-    position:relative;
-}
-
-.overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(255,255,255,0.95);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:16px;
-    z-index:10;
-}
-
-.start-btn{
-    padding:15px 30px;
-    font-size:20px;
-    border:none;
-    border-radius:12px;
+.green{
     background:#2ecc71;
-    color:white;
-    cursor:pointer;
 }
 
-.phrase{
-    font-size:26px;
-    font-weight:bold;
-    margin:15px 0;
-    min-height:60px;
+.orange{
+    background:#f39c12;
 }
 
-input{
-    width:95%;
-    max-width:700px;
-    padding:12px;
-    font-size:20px;
-    border-radius:10px;
-    border:2px solid #ccc;
-}
-
-button{
-    margin-top:15px;
-    padding:12px 25px;
-    font-size:18px;
-    border:none;
-    border-radius:10px;
-    background:#3498db;
-    color:white;
-    cursor:pointer;
-}
-
-.feedback{
-    margin-top:15px;
-    font-size:18px;
-    min-height:60px;
-    text-align:left;
-    background:#fafafa;
-    padding:10px;
-    border-radius:10px;
-    white-space:pre-line;
-}
-
-.errorBox{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    margin-top:15px;
-    flex-wrap:wrap;
-}
-
-.errorItem{
-    padding:10px 12px;
-    border-radius:10px;
-    background:#ddd;
-    font-size:14px;
-    font-weight:bold;
-    min-width:120px;
-    text-align:center;
-}
-
-.errorOn{
+.red{
     background:#e74c3c;
-    color:white;
 }
-
-#score,#timer{font-weight:bold;}
 
 footer{
     text-align:center;
-    margin-top:25px;
-    font-size:14px;
+    margin-top:20px;
     color:#666;
+    font-size:14px;
 }
 
 </style>
@@ -185,72 +191,162 @@ footer{
 <div class="top">
 
     <div class="box blue">
+
         <h3>📋 Consignes</h3>
+
         <p>✏️ Recopie exactement la phrase</p>
-        <p>🔠 Majuscules importantes</p>
-        <p>❗ Ponctuation obligatoire</p>
+        <p>🔠 Vérifie les majuscules</p>
+        <p>❗ Vérifie la ponctuation</p>
         <p>📏 Vérifie les espaces</p>
+
     </div>
 
     <div class="box blue">
+
         <h3>🎯 Essais</h3>
+
         <p>🎯 3 essais maximum</p>
         <p>🥇 1er essai = 3 points</p>
         <p>🥈 2e essai = 2 points</p>
         <p>🥉 3e essai = 1 point</p>
+
     </div>
 
     <div class="box greenbox">
+
         <div class="grid-right">
 
             <div class="smallbox">
+
                 📊 Score<br>
+
                 <span id="score">0 / 0</span>
+
                 <div id="balls" class="balls"></div>
+
             </div>
 
             <div class="smallbox">
+
                 ⏱️ Temps<br>
-                <span id="timer">0 minute 0 seconde</span>
+
+                <span id="timer">
+                    0 minute 0 seconde
+                </span>
+
             </div>
 
         </div>
+
     </div>
 
 </div>
 
 <div class="container">
 
-<div id="overlay" class="overlay">
-    <button class="start-btn" onclick="startGame()">▶ Clique quand tu es prêt</button>
+    <div id="overlay" class="overlay">
+
+        <button class="start-btn"
+                onclick="startGame()">
+
+            ▶ Clique quand tu es prêt
+
+        </button>
+
+    </div>
+
+    <div id="phrase" class="phrase"></div>
+
+    <input type="text" id="answer">
+
+    <br>
+
+    <button onclick="checkAnswer()">
+        Valider
+    </button>
+
+    <div id="feedback" class="feedback"></div>
+
+    <div class="errorBox">
+
+        <div id="e1" class="errorItem">
+            ❌ Mots
+        </div>
+
+        <div id="e2" class="errorItem">
+            🔠 Majuscule
+        </div>
+
+        <div id="e3" class="errorItem">
+            ❗ Ponctuation
+        </div>
+
+        <div id="e4" class="errorItem">
+            📏 Espaces
+        </div>
+
+    </div>
+
 </div>
 
-<div id="phrase" class="phrase"></div>
+<footer>
+    Copyright .: Leodium :.
+</footer>
 
-<input type="text" id="answer">
+<!-- =========================
+FENETRE FINALE
+========================= -->
 
-<br>
+<div id="finalScreen"
+     style="
+        display:none;
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.6);
+        z-index:999;
+        align-items:center;
+        justify-content:center;
+     ">
 
-<button onclick="checkAnswer()">Valider</button>
+    <div style="
+        background:white;
+        padding:30px;
+        border-radius:20px;
+        text-align:center;
+        width:90%;
+        max-width:500px;
+    ">
 
-<div id="feedback" class="feedback"></div>
+        <h2>🎉 Exercice terminé !</h2>
 
-<div id="errorBox" class="errorBox">
+        <div id="finalScore"
+             style="
+                font-size:28px;
+                margin-top:20px;
+             ">
+        </div>
 
-    <div id="e1" class="errorItem">❌ Mots</div>
-    <div id="e2" class="errorItem">🔠 Majuscule</div>
-    <div id="e3" class="errorItem">❗ Ponctuation</div>
-    <div id="e4" class="errorItem">↔️ Espaces</div>
+        <div id="finalBalls"
+             class="balls"
+             style="margin-top:20px;">
+        </div>
+
+        <div id="finalTime"
+             style="
+                font-size:24px;
+                margin-top:20px;
+             ">
+        </div>
+
+    </div>
 
 </div>
-
-</div>
-
-<footer>© Leodium</footer>
 
 <script>
 
-/* ===== 20 PHRASES (10 anciennes + 10 nouvelles avec ! ?) ===== */
+/* =========================
+PHRASES
+========================= */
 
 const allPhrases=[
 
@@ -278,18 +374,27 @@ const allPhrases=[
 
 ];
 
-/* ===== RANDOM PROPRE ===== */
+/* =========================
+RANDOM
+========================= */
+
 function shuffle(array){
+
     for(let i=array.length-1;i>0;i--){
+
         let j=Math.floor(Math.random()*(i+1));
+
         [array[i],array[j]]=[array[j],array[i]];
     }
+
     return array;
 }
 
-let phrases = shuffle([...allPhrases]).slice(0,10);
+let phrases=shuffle([...allPhrases]).slice(0,10);
 
-/* ===== RESTE IDENTIQUE ===== */
+/* =========================
+VARIABLES
+========================= */
 
 let current=0;
 let tries=0;
@@ -299,151 +404,382 @@ let started=false;
 let startTime=null;
 let timerInterval=null;
 
+let locked=false;
+
+/* =========================
+ELEMENTS
+========================= */
+
 const phraseEl=document.getElementById("phrase");
 const answerEl=document.getElementById("answer");
 const feedbackEl=document.getElementById("feedback");
 
-/* TIMER */
+/* =========================
+ENTER
+========================= */
+
+answerEl.addEventListener("keydown",function(event){
+
+    if(event.key==="Enter"){
+
+        event.preventDefault();
+
+        if(locked) return;
+
+        checkAnswer();
+    }
+});
+
+/* =========================
+TIMER
+========================= */
+
 function startTimer(){
+
     if(started) return;
+
     started=true;
+
     startTime=Date.now();
+
     timerInterval=setInterval(updateTimer,500);
 }
 
 function updateTimer(){
+
     let t=Math.floor((Date.now()-startTime)/1000);
+
     let m=Math.floor(t/60);
+
     let s=t%60;
 
-    let minText=(m<=1)?"minute":"minutes";
-    let secText=(s<=1)?"seconde":"secondes";
+    let minText=(m<=1)
+        ?"minute"
+        :"minutes";
+
+    let secText=(s<=1)
+        ?"seconde"
+        :"secondes";
 
     document.getElementById("timer").innerHTML=
-        m+" "+minText+" "+s+" "+secText;
+        m+" "+minText+" "+
+        s+" "+secText;
 }
 
 answerEl.addEventListener("input",startTimer);
 
-/* RESET ERRORS */
+/* =========================
+RESET ERREURS
+========================= */
+
 function resetErrors(){
+
     for(let i=1;i<=4;i++){
-        document.getElementById("e"+i).classList.remove("errorOn");
+
+        document
+            .getElementById("e"+i)
+            .classList
+            .remove("errorOn");
     }
 }
 
-/* START */
+/* =========================
+START
+========================= */
+
 function startGame(){
-    document.getElementById("overlay").style.display="none";
+
+    document
+        .getElementById("overlay")
+        .style
+        .display="none";
+
     createBalls();
+
     load();
 }
 
-/* BALLS */
+/* =========================
+BOULES
+========================= */
+
 function createBalls(){
+
     let b=document.getElementById("balls");
+
     b.innerHTML="";
+
     for(let i=0;i<phrases.length;i++){
+
         let d=document.createElement("div");
+
         d.className="ball";
+
         d.id="ball"+i;
+
         b.appendChild(d);
     }
 }
 
-/* LOAD */
+/* =========================
+LOAD
+========================= */
+
 function load(){
 
     if(current>=phrases.length){
-        phraseEl.innerHTML="";
-        answerEl.disabled=true;
+
         clearInterval(timerInterval);
+
+        answerEl.disabled=true;
+
+        document
+            .getElementById("finalScreen")
+            .style
+            .display="flex";
+
+        document
+            .getElementById("finalScore")
+            .innerHTML=
+            "📊 Score : "+
+            score+
+            " / "+
+            (phrases.length*3);
+
+        document
+            .getElementById("finalTime")
+            .innerHTML=
+            "⏱️ Temps : "+
+            document
+                .getElementById("timer")
+                .innerHTML;
+
+        document
+            .getElementById("finalBalls")
+            .innerHTML=
+            document
+                .getElementById("balls")
+                .innerHTML;
+
         return;
     }
 
     phraseEl.innerHTML=phrases[current];
+
     answerEl.value="";
+
     answerEl.focus();
 
     tries=0;
 
-    document.getElementById("score").innerHTML=
-        score+" / "+(phrases.length*3);
+    feedbackEl.innerHTML="";
+
+    document
+        .getElementById("score")
+        .innerHTML=
+        score+
+        " / "+
+        (phrases.length*3);
 
     resetErrors();
 }
 
-/* NORMALIZE */
+/* =========================
+NORMALIZE
+========================= */
+
 function normalize(str){
-    return str.toLowerCase()
+
+    return str
+        .toLowerCase()
         .replace(/[.,!?;:]/g,"")
         .replace(/\s+/g," ")
         .trim();
 }
 
-/* CHECK */
+/* =========================
+CHECK
+========================= */
+
 function checkAnswer(){
 
+    if(locked) return;
+
     let correct=phrases[current];
+
     let user=answerEl.value;
 
     tries++;
 
     resetErrors();
 
-    if(user.charAt(0)!==correct.charAt(0))
-        document.getElementById("e2").classList.add("errorOn");
+    /* MAJUSCULE */
 
-    let last=user.trim().slice(-1);
-    let valid=[".",",","!","?"];
+    if(user.charAt(0)!==
+       correct.charAt(0)){
 
-    if(!valid.includes(last))
-        document.getElementById("e3").classList.add("errorOn");
+        document
+            .getElementById("e2")
+            .classList
+            .add("errorOn");
+    }
 
-    if(user.includes("  ") || user.trim()!==user)
-        document.getElementById("e4").classList.add("errorOn");
+    /* PONCTUATION */
 
-    let u=normalize(user).split(" ").filter(x=>x);
-    let c=normalize(correct).split(" ").filter(x=>x);
+    let trimmed=user.trim();
 
-    let wordError = u.length!==c.length;
+    let ponctuationCorrecte=
+        trimmed.endsWith(".") ||
+        trimmed.endsWith(",") ||
+        trimmed.endsWith("!") ||
+        trimmed.endsWith("?");
 
-    if(!wordError){
+    if(
+        !ponctuationCorrecte ||
+        trimmed.endsWith("..") ||
+        trimmed.endsWith("!!") ||
+        trimmed.endsWith("??")
+    ){
+
+        document
+            .getElementById("e3")
+            .classList
+            .add("errorOn");
+    }
+
+    /* ESPACES */
+
+    if(
+        user.includes("  ") ||
+        user.trim()!==user
+    ){
+
+        document
+            .getElementById("e4")
+            .classList
+            .add("errorOn");
+    }
+
+    /* MOTS */
+
+    let u=normalize(user)
+        .split(" ")
+        .filter(x=>x);
+
+    let c=normalize(correct)
+        .split(" ")
+        .filter(x=>x);
+
+    let wordError=false;
+
+    if(u.length!==c.length){
+
+        wordError=true;
+    }
+
+    else{
+
         for(let i=0;i<c.length;i++){
+
             if(u[i]!==c[i]){
+
                 wordError=true;
+
                 break;
             }
         }
     }
 
-    if(wordError)
-        document.getElementById("e1").classList.add("errorOn");
+    if(wordError){
+
+        document
+            .getElementById("e1")
+            .classList
+            .add("errorOn");
+    }
+
+    /* BONNE REPONSE */
 
     if(user===correct){
 
-        let gain=tries===1?3:tries===2?2:1;
+        locked=true;
+
+        let gain=
+            tries===1 ? 3 :
+            tries===2 ? 2 : 1;
 
         score+=gain;
 
-        let ball=document.getElementById("ball"+current);
-        if(ball) ball.classList.add(tries===1?"green":"orange");
+        let ball=
+            document
+                .getElementById(
+                    "ball"+current
+                );
 
-        current++;
-        feedbackEl.innerHTML="✅ Bravo !";
-        load();
+        if(ball){
+
+            ball.classList.add(
+                tries===1
+                ?"green"
+                :"orange"
+            );
+        }
+
+        feedbackEl.innerHTML=
+            "✅ Bravo, la phrase est correcte !";
+
+        setTimeout(()=>{
+
+            current++;
+
+            locked=false;
+
+            load();
+
+        },2000);
+
         return;
     }
 
-    feedbackEl.innerHTML="❌ Corrige les erreurs";
+    /* ERREUR */
+
+    feedbackEl.innerHTML=
+        "❌ Corrige les erreurs.";
+
+    /* 3 ESSAIS */
 
     if(tries>=3){
 
-        let ball=document.getElementById("ball"+current);
-        if(ball) ball.classList.add("red");
+        locked=true;
 
-        current++;
-        load();
+        let ball=
+            document
+                .getElementById(
+                    "ball"+current
+                );
+
+        if(ball){
+
+            ball.classList.add("red");
+        }
+
+        feedbackEl.innerHTML=
+            "❌ Mince, tu n'as pas réussi.<br><br>"+
+            "✅ La bonne phrase était :<br><strong>"+
+            correct+
+            "</strong>";
+
+        setTimeout(()=>{
+
+            current++;
+
+            locked=false;
+
+            load();
+
+        },2000);
+
+        return;
     }
 }
 
