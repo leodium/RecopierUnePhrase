@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -145,6 +146,7 @@ button:hover{
     <h1>Copie la phrase</h1>
 
     <div class="consignes">
+
         <h2>Consignes</h2>
 
         <ul>
@@ -160,6 +162,7 @@ button:hover{
             ⭐ 2e essai réussi = 2 points<br>
             ⭐ 3e essai réussi = 1 point
         </p>
+
     </div>
 
     <div id="phrase" class="phrase"></div>
@@ -174,7 +177,7 @@ button:hover{
 
     <div id="feedback" class="feedback"></div>
 
-    <div id="score" class="score">Score : 0</div>
+    <div id="score" class="score">Score : 0 / 3</div>
 
     <div id="balls" class="balls"></div>
 
@@ -184,11 +187,12 @@ button:hover{
 
 <script>
 
-// =========================
+// ====================================
 // LISTE DES 50 PHRASES
-// =========================
+// ====================================
 
 const allPhrases = [
+
 "Le petit chat noir dort sur le canapé.",
 "Papa prépare une grande pizza pour le repas.",
 "La maîtresse écrit la date au tableau noir.",
@@ -239,11 +243,12 @@ const allPhrases = [
 "Le vélo rouge reste devant la porte du garage.",
 "Le fermier conduit son tracteur dans le grand champ.",
 "Les oiseaux construisent un nid dans le vieux chêne."
+
 ];
 
-// =========================
+// ====================================
 // VARIABLES
-// =========================
+// ====================================
 
 const shuffled = [...allPhrases].sort(() => Math.random() - 0.5);
 
@@ -253,9 +258,9 @@ let currentPhrase = 0;
 let tries = 0;
 let score = 0;
 
-// =========================
+// ====================================
 // ELEMENTS HTML
-// =========================
+// ====================================
 
 const phraseEl = document.getElementById("phrase");
 const answerEl = document.getElementById("answer");
@@ -265,9 +270,9 @@ const scoreEl = document.getElementById("score");
 const ballsEl = document.getElementById("balls");
 const endMessageEl = document.getElementById("endMessage");
 
-// =========================
-// CREATION DES 10 BOULES
-// =========================
+// ====================================
+// CREATION DES BOULES
+// ====================================
 
 for(let i = 0; i < 10; i++){
 
@@ -280,9 +285,9 @@ for(let i = 0; i < 10; i++){
     ballsEl.appendChild(ball);
 }
 
-// =========================
+// ====================================
 // AFFICHER UNE PHRASE
-// =========================
+// ====================================
 
 function loadPhrase(){
 
@@ -299,8 +304,8 @@ function loadPhrase(){
         feedbackEl.innerHTML = "";
 
         endMessageEl.innerHTML =
-            "🎉 Bravo !<br>Tu as terminé l'exercice.<br><br>Score final : "
-            + score + " / 30";
+            "🎉 Bravo !<br><br>Tu as terminé l'exercice.<br><br>Score final : "
+            + score + " / " + (phrases.length * 3);
 
         return;
     }
@@ -316,11 +321,16 @@ function loadPhrase(){
     tries = 0;
 
     attemptsEl.innerHTML = "Essai : 1 / 3";
+
+    const maxPossible = (currentPhrase + 1) * 3;
+
+    scoreEl.innerHTML =
+        "Score : " + score + " / " + maxPossible;
 }
 
-// =========================
+// ====================================
 // VERIFICATION
-// =========================
+// ====================================
 
 function checkAnswer(){
 
@@ -353,7 +363,7 @@ function checkAnswer(){
         errors.push("Il y a trop d'espaces.");
     }
 
-    // Espaces avant/après
+    // Espaces début/fin
     if(user.trim() !== user){
 
         errors.push("Attention aux espaces au début ou à la fin.");
@@ -368,9 +378,9 @@ function checkAnswer(){
         }
     }
 
-    // =========================
-    // REPONSE CORRECTE
-    // =========================
+    // ====================================
+    // BONNE REPONSE
+    // ====================================
 
     if(user === correct){
 
@@ -405,7 +415,10 @@ function checkAnswer(){
 
         score += gained;
 
-        scoreEl.innerHTML = "Score : " + score;
+        const maxPossible = (currentPhrase + 1) * 3;
+
+        scoreEl.innerHTML =
+            "Score : " + score + " / " + maxPossible;
 
         feedbackEl.innerHTML = "✅ Bravo !";
 
@@ -416,9 +429,9 @@ function checkAnswer(){
         return;
     }
 
-    // =========================
-    // REPONSE FAUSSE
-    // =========================
+    // ====================================
+    // MAUVAISE REPONSE
+    // ====================================
 
     feedbackEl.innerHTML =
         "❌ " + errors.join("<br>");
@@ -446,9 +459,9 @@ function checkAnswer(){
         "Essai : " + (tries + 1) + " / 3";
 }
 
-// =========================
+// ====================================
 // TOUCHE ENTER
-// =========================
+// ====================================
 
 answerEl.addEventListener("keydown", function(event){
 
@@ -458,9 +471,9 @@ answerEl.addEventListener("keydown", function(event){
     }
 });
 
-// =========================
+// ====================================
 // DEMARRAGE
-// =========================
+// ====================================
 
 loadPhrase();
 
