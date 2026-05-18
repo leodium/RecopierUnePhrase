@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Copie de phrases</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f7fb;
+    margin:0;
+    padding:20px;
+    text-align:center;
+    color:#333;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 0 12px rgba(0,0,0,0.1);
+}
+
+h1{
+    color:#2c3e50;
+    margin-bottom:20px;
+}
+
+.consignes{
+    background:#eef5ff;
+    padding:20px;
+    border-radius:15px;
+    text-align:left;
+    margin-bottom:30px;
+}
+
+.consignes h2{
+    margin-top:0;
+}
+
+.consignes ul{
+    line-height:1.8;
+}
+
+.phrase{
+    font-size:30px;
+    font-weight:bold;
+    margin:30px 0;
+    color:#222;
+}
+
+input{
+    width:90%;
+    max-width:700px;
+    padding:15px;
+    font-size:24px;
+    border-radius:12px;
+    border:2px solid #ccc;
+}
+
+button{
+    margin-top:25px;
+    padding:14px 35px;
+    font-size:22px;
+    border:none;
+    border-radius:12px;
+    background:#3498db;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#2980b9;
+}
+
+.feedback{
+    margin-top:25px;
+    min-height:60px;
+    font-size:24px;
+    line-height:1.5;
+}
+
+.attempts{
+    margin-top:20px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.score{
+    margin-top:25px;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.balls{
+    margin-top:35px;
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+.ball{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    background:#b0b0b0;
+}
+
+.green{
+    background:#2ecc71;
+}
+
+.orange{
+    background:#f39c12;
+}
+
+.red{
+    background:#e74c3c;
+}
+
+.end-message{
+    font-size:34px;
+    color:#27ae60;
+    margin-top:30px;
+    font-weight:bold;
+}
+
+.hidden{
+    display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Copie la phrase</h1>
+
+    <div class="consignes">
+        <h2>Consignes</h2>
+
+        <ul>
+            <li>Recopie la phrase exactement comme elle est écrite.</li>
+            <li>Fais attention à la majuscule.</li>
+            <li>Fais attention aux espaces entre les mots.</li>
+            <li>N'oublie pas le point ou la virgule.</li>
+            <li>Tu as 3 essais maximum pour chaque phrase.</li>
+        </ul>
+
+        <p>
+            ⭐ 1er essai réussi = 3 points<br>
+            ⭐ 2e essai réussi = 2 points<br>
+            ⭐ 3e essai réussi = 1 point
+        </p>
+    </div>
+
+    <div id="phrase" class="phrase"></div>
+
+    <input type="text" id="answer" autocomplete="off">
+
+    <br>
+
+    <button onclick="checkAnswer()">Valider</button>
+
+    <div id="attempts" class="attempts"></div>
+
+    <div id="feedback" class="feedback"></div>
+
+    <div id="score" class="score">Score : 0</div>
+
+    <div id="balls" class="balls"></div>
+
+    <div id="endMessage" class="end-message"></div>
+
+</div>
+
+<script>
+
+// =========================
+// LISTE DES 50 PHRASES
+// =========================
+
+const allPhrases = [
+"Le petit chat noir dort sur le canapé.",
+"Papa prépare une grande pizza pour le repas.",
+"La maîtresse écrit la date au tableau noir.",
+"Le chien blanc court vite dans le jardin.",
+"Emma dessine un joli soleil dans son cahier.",
+"Le bébé regarde les oiseaux par la fenêtre.",
+"Nous jouons ensemble dans la grande cour d'école.",
+"Le lapin gris mange une carotte dans l'herbe.",
+"Le soleil brille fort pendant toute la journée.",
+"Marie range ses livres après la classe du matin.",
+"Le garçon ouvre doucement la porte de la cuisine.",
+"La petite souris mange un morceau de fromage jaune.",
+"Tom construit une haute tour avec ses cubes rouges.",
+"Le fermier nourrit les poules près de la grange.",
+"Le poisson rouge nage lentement dans le grand aquarium.",
+"Julie écoute une histoire avant de dormir ce soir.",
+"Le vent froid souffle très fort dans les arbres.",
+"Le pirate cherche un trésor sur la grande île.",
+"Mon frère joue au ballon avec ses amis dehors.",
+"Le cheval saute facilement par dessus la vieille barrière.",
+"La pluie tombe doucement sur les voitures dans la rue.",
+"Le singe grimpe rapidement dans les arbres de la forêt.",
+"Le docteur soigne le petit garçon malade aujourd'hui.",
+"Papa porte une grosse boîte jusque dans le garage.",
+"Le train arrive rapidement à la gare du village.",
+"La tortue avance lentement sur le chemin de pierres.",
+"Le coq chante très tôt chaque matin dans la ferme.",
+"Le bébé boit tranquillement son lait avant la sieste.",
+"Le lion regarde les visiteurs derrière la grande vitre.",
+"Le jardinier arrose les fleurs avec un long tuyau.",
+"La petite fille chante une chanson avec sa maman.",
+"Le renard observe la lune pendant la nuit calme.",
+"Le canard nage paisiblement sur le lac du parc.",
+"Le bus jaune arrive devant l'école chaque matin.",
+"Le mouton dort calmement dans la prairie toute verte.",
+"Paul ferme les volets avant de quitter la maison.",
+"Le ciel devient gris avant le début de l'orage.",
+"Les enfants courent rapidement vers la cour de récréation.",
+"Le sapin de Noël brille avec beaucoup de lumières.",
+"Maman prépare un délicieux gâteau pour le goûter d'anniversaire.",
+"Le chat gris regarde les poissons dans le bassin.",
+"Luc range soigneusement ses vêtements dans la grande armoire.",
+"Le garçon lit une bande dessinée dans son lit.",
+"La cloche sonne fort à la fin de l'école.",
+"Le loup avance discrètement dans la forêt très sombre.",
+"Emma écrit une belle carte pour son grand père.",
+"Le bébé sourit quand maman chante une douce chanson.",
+"Le vélo rouge reste devant la porte du garage.",
+"Le fermier conduit son tracteur dans le grand champ.",
+"Les oiseaux construisent un nid dans le vieux chêne."
+];
+
+// =========================
+// VARIABLES
+// =========================
+
+const shuffled = [...allPhrases].sort(() => Math.random() - 0.5);
+
+const phrases = shuffled.slice(0, 10);
+
+let currentPhrase = 0;
+let tries = 0;
+let score = 0;
+
+// =========================
+// ELEMENTS HTML
+// =========================
+
+const phraseEl = document.getElementById("phrase");
+const answerEl = document.getElementById("answer");
+const feedbackEl = document.getElementById("feedback");
+const attemptsEl = document.getElementById("attempts");
+const scoreEl = document.getElementById("score");
+const ballsEl = document.getElementById("balls");
+const endMessageEl = document.getElementById("endMessage");
+
+// =========================
+// CREATION DES 10 BOULES
+// =========================
+
+for(let i = 0; i < 10; i++){
+
+    const ball = document.createElement("div");
+
+    ball.classList.add("ball");
+
+    ball.id = "ball" + i;
+
+    ballsEl.appendChild(ball);
+}
+
+// =========================
+// AFFICHER UNE PHRASE
+// =========================
+
+function loadPhrase(){
+
+    if(currentPhrase >= phrases.length){
+
+        phraseEl.innerHTML = "";
+
+        answerEl.classList.add("hidden");
+
+        document.querySelector("button").classList.add("hidden");
+
+        attemptsEl.innerHTML = "";
+
+        feedbackEl.innerHTML = "";
+
+        endMessageEl.innerHTML =
+            "🎉 Bravo !<br>Tu as terminé l'exercice.<br><br>Score final : "
+            + score + " / 30";
+
+        return;
+    }
+
+    phraseEl.innerHTML = phrases[currentPhrase];
+
+    answerEl.value = "";
+
+    answerEl.focus();
+
+    feedbackEl.innerHTML = "";
+
+    tries = 0;
+
+    attemptsEl.innerHTML = "Essai : 1 / 3";
+}
+
+// =========================
+// VERIFICATION
+// =========================
+
+function checkAnswer(){
+
+    const correct = phrases[currentPhrase];
+
+    const user = answerEl.value;
+
+    tries++;
+
+    let errors = [];
+
+    // Majuscule
+    if(user.charAt(0) !== correct.charAt(0)){
+
+        errors.push("Attention à la majuscule.");
+    }
+
+    // Point ou virgule
+    if(
+        !user.endsWith(".") &&
+        !user.endsWith(",")
+    ){
+
+        errors.push("Il manque le point ou la virgule.");
+    }
+
+    // Double espaces
+    if(user.includes("  ")){
+
+        errors.push("Il y a trop d'espaces.");
+    }
+
+    // Espaces avant/après
+    if(user.trim() !== user){
+
+        errors.push("Attention aux espaces au début ou à la fin.");
+    }
+
+    // Phrase incorrecte
+    if(user !== correct){
+
+        if(errors.length === 0){
+
+            errors.push("Certains mots ne sont pas corrects.");
+        }
+    }
+
+    // =========================
+    // REPONSE CORRECTE
+    // =========================
+
+    if(user === correct){
+
+        let gained = 0;
+
+        if(tries === 1){
+
+            gained = 3;
+
+            document
+                .getElementById("ball" + currentPhrase)
+                .classList.add("green");
+        }
+
+        else if(tries === 2){
+
+            gained = 2;
+
+            document
+                .getElementById("ball" + currentPhrase)
+                .classList.add("orange");
+        }
+
+        else{
+
+            gained = 1;
+
+            document
+                .getElementById("ball" + currentPhrase)
+                .classList.add("orange");
+        }
+
+        score += gained;
+
+        scoreEl.innerHTML = "Score : " + score;
+
+        feedbackEl.innerHTML = "✅ Bravo !";
+
+        currentPhrase++;
+
+        setTimeout(loadPhrase, 1200);
+
+        return;
+    }
+
+    // =========================
+    // REPONSE FAUSSE
+    // =========================
+
+    feedbackEl.innerHTML =
+        "❌ " + errors.join("<br>");
+
+    // Après 3 essais
+    if(tries >= 3){
+
+        document
+            .getElementById("ball" + currentPhrase)
+            .classList.add("red");
+
+        feedbackEl.innerHTML +=
+            "<br><br>La bonne phrase était :<br><strong>"
+            + correct +
+            "</strong>";
+
+        currentPhrase++;
+
+        setTimeout(loadPhrase, 3000);
+
+        return;
+    }
+
+    attemptsEl.innerHTML =
+        "Essai : " + (tries + 1) + " / 3";
+}
+
+// =========================
+// TOUCHE ENTER
+// =========================
+
+answerEl.addEventListener("keydown", function(event){
+
+    if(event.key === "Enter"){
+
+        checkAnswer();
+    }
+});
+
+// =========================
+// DEMARRAGE
+// =========================
+
+loadPhrase();
+
+</script>
+
+</body>
+</html>
